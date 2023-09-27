@@ -1,0 +1,144 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 500,
+  "height": 250,
+  "title": "Number of Esablished Languges vs. Immigrant Languages per Country",
+  "data": {
+    "url": "data/FIT3179 Assignment 2 Data - Homework 4.csv"
+  },
+  "params": [
+    {
+      "name": "Speakers_Above",
+      "value": 0,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 100000000,
+        "step": 1000000,
+        "name": "Minimum Number of Speakers: "
+      }
+    },
+    {
+      "name": "Speakers_Below",
+      "value": 1500000000,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 1500000000,
+        "step": 1000000,
+        "name": "Maximum Number of Speakers: "
+      }
+    }
+  ],
+  "transform": [
+    { "filter": "datum.Established > 0" },
+    { "filter": "datum.Immigrant >= 0" },
+    {
+      "filter": "Speakers_Below > datum.Total_Number_Speakers && datum.Total_Number_Speakers > Speakers_Above"
+    },
+    {
+      "calculate": "datum.Total_Number_Speakers/datum.Count",
+      "as": "Number of Speakers Split per Language"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "Established",
+      "type": "quantitative",
+      "title": "Established Languages",
+      "axis": { "tickCount": 7 },
+      "scale": { "type": "log", "domain": [1, 1000] }
+    },
+    "y": {
+      "field": "Immigrant",
+      "type": "quantitative",
+      "title": "Immigrant Languages",
+      "axis": { "tickCount": 6 },
+      "scale": { "type": "linear", "domain": [0, 150] }
+    }
+  },
+  "layer": [
+    {
+      "mark": "circle",
+      "encoding": {
+        "color": { "value": "orange" },
+        "size": {
+          "field": "Count",
+          "type": "quantitative",
+          "scale": {
+            "type": "threshold",
+            "domain": [20, 50, 100, 250, 500],
+            "range": [10, 50, 150, 200, 300, 400]
+          },
+          "legend": { "format": "," }
+        },
+        "opacity": { "value": 0.75 },
+        "tooltip": [
+          { "field": "Country", "type": "nominal" },
+          { "field": "Established", "type": "quantitative", "format": "," },
+          { "field": "Immigrant", "type": "quantitative", "format": "," },
+          {
+            "field": "Count",
+            "title": "Number of Languages",
+            "type": "quantitative",
+            "format": ","
+          },
+          {
+            "field": "Total_Number_Speakers",
+            "title": "Total Number of Speakers",
+            "type": "quantitative",
+            "format": ","
+          },
+          {
+            "field": "Number of Speakers Split per Language",
+            "type": "quantitative",
+            "format": ".1f"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "middle",
+        "dx": 12,
+        "fontSize": 11.5,
+        "fontStyle": "italic"
+      },
+      "encoding": {
+        "text": { "field": "Country", "type": "nominal" },
+        "color": { "value": "black" },
+        "opacity": {
+          "condition": {
+            "test": "datum['Country'] == 'China' || datum['Country'] == 'Singapore' || datum['Country'] == 'Australia' || datum['Country'] == 'Papua New Guinea' || datum['Country'] == 'Germany' || datum['Country'] == 'Iran' ||  datum['Country'] == 'United States'",
+            "value": 1
+          },
+          "value": 0
+        },
+        "tooltip": [
+          { "field": "Country", "type": "nominal" },
+          { "field": "Established", "type": "quantitative", "format": "," },
+          { "field": "Immigrant", "type": "quantitative", "format": "," },
+          {
+            "field": "Count",
+            "title": "Number of Languages",
+            "type": "quantitative",
+            "format": ","
+          },
+          {
+            "field": "Total_Number_Speakers",
+            "title": "Total Number of Speakers",
+            "type": "quantitative",
+            "format": ","
+          },
+          {
+            "field": "Number of Speakers Split per Language",
+            "type": "quantitative",
+            "format": ".2f"
+          }
+        ]
+      }
+    }
+  ]
+}
